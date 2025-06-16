@@ -1,0 +1,17 @@
+{
+  "name": "pivomaster-portal",
+  "version": "1.0.0",
+  "description": "Portal Central de Gerenciamento - Pivô Master V3",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build completed'",
+    "start": "vercel dev"
+  },
+  "keywords": ["pivo", "master", "iot", "agricultura", "automacao"],
+  "author": "Pivô Master Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
+

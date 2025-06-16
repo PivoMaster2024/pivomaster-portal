@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pivô Master - Portal Central</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        #root {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #0066cc;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #fcc;
+        }
+        
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .device-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #0066cc;
+        }
+        
+        .device-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-online {
+            background: #28a745;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+        
+        .status-offline {
+            background: #dc3545;
+        }
+        
+        .device-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .device-info {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .device-tension {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #0066cc;
+            margin: 10px 0;
+        }
+        
+        .device-range {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .range-ideal {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .range-tap-baixo {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .range-tap-alto {
+            background: #cce7ff;
+            color: #004085;
+        }
+        
+        .range-emergencia {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .add-device-btn {
+            background: #28a745;
+            margin-bottom: 20px;
+            width: auto;
+            display: inline-block;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .device-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logout-btn {
+                position: static;
+                margin-top: 20px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Componente principal da aplicação
+        function App() {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [devices, setDevices] = useState([]);
+            const [showAddDevice, setShowAddDevice] = useState(false);
+            const [error, setError] = useState('');
+
+            // Verifica se já está logado
+            useEffect(() => {
+                const logged = localStorage.getItem('pivomaster_logged');
+                if (logged === 'true') {
+                    setIsLoggedIn(true);
+                    loadDevices();
+                }
+            }, []);
+
+            // Carrega dispositivos salvos
+            const loadDevices = () => {
+                const savedDevices = localStorage.getItem('pivomaster_devices');
+                if (savedDevices) {
+                    setDevices(JSON.parse(savedDevices));
+                }
+            };
+
+            // Salva dispositivos
+            const saveDevices = (newDevices) => {
+                localStorage.setItem('pivomaster_devices', JSON.stringify(newDevices));
+                setDevices(newDevices);
+            };
+
+            // Login
+            const handleLogin = (username, password) => {
+                // Senhas de exemplo - em produção, usar autenticação real
+                if (username === 'admin' && password === 'MasterPivo2024') {
+                    setIsLoggedIn(true);
+                    localStorage.setItem('pivomaster_logged', 'true');
+                    loadDevices();
+                    setError('');
+                } else {
+                    setError('Usuário ou senha incorretos');
+                }
+            };
+
+            // Logout
+            const handleLogout = () => {
+                setIsLoggedIn(false);
+                localStorage.removeItem('pivomaster_logged');
+            };
+
+            // Adicionar dispositivo
+            const addDevice = (device) => {
+                const newDevices = [...devices, { ...device, id: Date.now() }];
+                saveDevices(newDevices);
+                setShowAddDevice(false);
+            };
+
+            // Remover dispositivo
+            const removeDevice = (id) => {
+                const newDevices = devices.filter(d => d.id !== id);
+                saveDevices(newDevices);
+            };
+
+            // Acessar dispositivo
+            const accessDevice = (url) => {
+                window.open(`http://${url}`, '_blank');
+            };
+
+            if (!isLoggedIn) {
+                return <LoginForm onLogin={handleLogin} error={error} />;
+            }
+
+            return (
+                <div className="container">
+                    <div className="header" style={{position: 'relative'}}>
+                        <h1>🌾 PIVÔ MASTER</h1>
+                        <p>Portal Central de Gerenciamento</p>
+                        <button className="logout-btn" onClick={handleLogout}>
+                            Sair
+                        </button>
+                    </div>
+                    <div className="content">
+                        <button 
+                            className="btn add-device-btn"
+                            onClick={() => setShowAddDevice(true)}
+                        >
+                            ➕ Adicionar Dispositivo
+                        </button>
+                        
+                        <DeviceGrid 
+                            devices={devices} 
+                            onAccess={accessDevice}
+                            onRemove={removeDevice}
+                        />
+                        
+                        {showAddDevice && (
+                            <AddDeviceModal 
+                                onAdd={addDevice}
+                                onClose={() => setShowAddDevice(false)}
+                            />
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // Componente de Login
+        function LoginForm({ onLogin, error }) {
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                onLogin(username, password);
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>🌾 PIVÔ MASTER</h1>
+                        <p>Portal Central de Gerenciamento</p>
+                    </div>
+                    <div className="content">
+                        <form className="login-form" onSubmit={handleSubmit}>
+                            {error && <div className="error">{error}</div>}
+                            
+                            <div className="form-group">
+                                <label>Usuário:</label>
+                                <input
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    placeholder="Digite seu usuário"
+                                    required
+                                />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Senha:</label>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Digite sua senha"
+                                    required
+                                />
+                            </div>
+                            
+                            <button type="submit" className="btn">
+                                🔐 Entrar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
+        // Grid de dispositivos
+        function DeviceGrid({ devices, onAccess, onRemove }) {
+            if (devices.length === 0) {
+                return (
+                    <div style={{textAlign: 'center', padding: '50px', color: '#666'}}>
+                        <h3>Nenhum dispositivo cadastrado</h3>
+                        <p>Clique em "Adicionar Dispositivo" para começar</p>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="device-grid">
+                    {devices.map(device => (
+                        <DeviceCard 
+                            key={device.id}
+                            device={device}
+                            onAccess={onAccess}
+                            onRemove={onRemove}
+                        />
+                    ))}
+                </div>
+            );
+        }
+
+        // Card de dispositivo
+        function DeviceCard({ device, onAccess, onRemove }) {
+            const [status, setStatus] = useState('checking');
+            const [deviceData, setDeviceData] = useState(null);
+
+            // Verifica status do dispositivo
+            useEffect(() => {
+                checkDeviceStatus();
+                const interval = setInterval(checkDeviceStatus, 30000); // Verifica a cada 30s
+                return () => clearInterval(interval);
+            }, []);
+
+            const checkDeviceStatus = async () => {
+                try {
+                    const response = await fetch(`http://${device.url}/valores`, {
+                        method: 'GET',
+                        timeout: 5000
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        setStatus('online');
+                        setDeviceData(data);
+                    } else {
+                        setStatus('offline');
+                    }
+                } catch (error) {
+                    setStatus('offline');
+                }
+            };
+
+            const getRangeClass = (range) => {
+                if (!range) return 'range-offline';
+                if (range.includes('IDEAL')) return 'range-ideal';
+                if (range.includes('TAP_BAIXO')) return 'range-tap-baixo';
+                if (range.includes('TAP_ALTO')) return 'range-tap-alto';
+                if (range.includes('EMERGENCIA')) return 'range-emergencia';
+                return 'range-ideal';
+            };
+
+            return (
+                <div className="device-card" onClick={() => onAccess(device.url)}>
+                    <div className="device-status">
+                        <div className={`status-indicator ${status === 'online' ? 'status-online' : 'status-offline'}`}></div>
+                        <span>{status === 'online' ? 'Online' : 'Offline'}</span>
+                        <button 
+                            style={{marginLeft: 'auto', background: '#dc3545', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', fontSize: '12px'}}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (confirm('Remover este dispositivo?')) {
+                                    onRemove(device.id);
+                                }
+                            }}
+                        >
+                            ✕
+                        </button>
+                    </div>
+                    
+                    <div className="device-name">{device.name}</div>
+                    <div className="device-info">📍 {device.location}</div>
+                    <div className="device-info">🌐 {device.url}</div>
+                    
+                    {deviceData && (
+                        <>
+                            <div className="device-tension">
+                                ⚡ {deviceData.tensaoReal}V
+                            </div>
+                            <div className={`device-range ${getRangeClass(deviceData.faixa)}`}>
+                                {deviceData.faixa || 'Desconhecido'}
+                            </div>
+                        </>
+                    )}
+                    
+                    {status === 'offline' && (
+                        <div className="device-range range-emergencia">
+                            OFFLINE
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Modal para adicionar dispositivo
+        function AddDeviceModal({ onAdd, onClose }) {
+            const [name, setName] = useState('');
+            const [location, setLocation] = useState('');
+            const [url, setUrl] = useState('');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (name && location && url) {
+                    onAdd({ name, location, url });
+                }
+            };
+
+            return (
+                <div className="modal">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h2>Adicionar Dispositivo</h2>
+                            <button className="close-btn" onClick={onClose}>✕</button>
+                        </div>
+                        
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label>Nome do Dispositivo:</label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="Ex: Pivô São Paulo"
+                                    required
+                                />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Localização:</label>
+                                <input
+                                    type="text"
+                                    value={location}
+                                    onChange={(e) => setLocation(e.target.value)}
+                                    placeholder="Ex: São Paulo - SP"
+                                    required
+                                />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>URL/IP do Dispositivo:</label>
+                                <input
+                                    type="text"
+                                    value={url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                    placeholder="Ex: pivo001.ddns.net:8080 ou 192.168.1.100"
+                                    required
+                                />
+                            </div>
+                            
+                            <button type="submit" className="btn">
+                                ➕ Adicionar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
+        // Renderiza a aplicação
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+
